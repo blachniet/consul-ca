@@ -10,7 +10,7 @@ This project was inspired by a script written by [@teeram](https://github.com/te
 
 1. Update the [cert subj parameters in bootstrap.sh](https://github.com/blachniet/consul-ca/blob/master/bootstrap.sh#L3)
 2. Update the [Consul parameters in bootstrap.sh](https://github.com/blachniet/consul-ca/blob/master/bootstrap.sh#L11) to reflect your Consul datacenter and domain names
-3. Execute `./bootstrap.sh`. After the script completes, the `files/` directory contains certificates and keys for your certificate authority (`ca.[crt|key]`>), Consul server agent (`server.[crt|key]`), and non-server Consul agent (`agent.[crt|key]`).
+3. Execute `./bootstrap.sh`. After the script completes, the `files/` directory contains certificates and keys for your certificate authority (`ca.[crt|key]`>), Consul server agent (`agent-server.[crt|key]`), and Consul client agent (`agent-client.[crt|key]`).
 4. Follow the instructions in [RPC Encryption with TLS](https://www.consul.io/docs/agent/encryption.html#rpc-encryption-with-tls) to use your new certificates
 
 ## Generate More Certificates
@@ -31,7 +31,7 @@ openssl ca -batch -config ca.conf -notext -in files/mycert.csr -out files/mycert
 If you need to install your certificate and key in the Windows or Mac certificate store, you will need a [PCKS #12](https://en.wikipedia.org/wiki/PKCS_12) file. The example below creates a PCKS #12 file from the agent certificate and key.
 
 ```bash
-openssl pkcs12 -export -out files/agent.p12 -inkey files/agent.key -in files/agent.crt
+openssl pkcs12 -export -out files/agent-client.p12 -inkey files/agent-client.key -in files/agent-client.crt
 ```
 
 ## Notes

@@ -15,7 +15,7 @@ CONSUL_DOMAIN="consul"
 # Create the -subj arg for each cert
 CA_SUBJ="/CN=${CN}${SUBJ_BASE}"
 SERVER_SUBJ="/CN=server.${CONSUL_DC}.${CONSUL_DOMAIN}${SUBJ_BASE}"
-AGENT_SUBJ="/CN=agent.${CONSUL_DC}.${CONSUL_DOMAIN}${SUBJ_BASE}"
+CLIENT_SUBJ="/CN=client.${CONSUL_DC}.${CONSUL_DOMAIN}${SUBJ_BASE}"
 
 # Create the directories/files needed for the CA
 mkdir -p files
@@ -27,15 +27,15 @@ touch state/certindex
 openssl genrsa -out files/ca.key 4096
 openssl req -x509 -new -nodes -key files/ca.key -subj "$CA_SUBJ" -days 3650 -out files/ca.crt -sha256
 
-# Generate keys and certificates for Consul servers
-openssl genrsa -out files/server.key 4096
-openssl req -new -key files/server.key -subj "$SERVER_SUBJ" -out files/server.csr -sha256
-openssl ca -batch -config ca.conf -notext -in files/server.csr -out files/server.crt
+# Generate keys and certificates for Consul server agents
+openssl genrsa -out files/agent-server.key 4096
+openssl req -new -key files/agent-server.key -subj "$SERVER_SUBJ" -out files/agent-server.csr -sha256
+openssl ca -batch -config ca.conf -notext -in files/agent-server.csr -out files/agent-server.crt
 
-# Generate keys and certificates for non-server Consul agents
-openssl genrsa -out files/agent.key 4096
-openssl req -new -key files/agent.key -subj "$AGENT_SUBJ" -out files/agent.csr -sha256
-openssl ca -batch -config ca.conf -notext -in files/agent.csr -out files/agent.crt
+# Generate keys and certificates for Consul client agents
+openssl genrsa -out files/agent-client.key 4096
+openssl req -new -key files/agent-client.key -subj "$CLIENT_SUBJ" -out files/agent-client.csr -sha256
+openssl ca -batch -config ca.conf -notext -in files/agent-client.csr -out files/agent-client.crt
 
 # Clean up csrs
 rm files/*.csr
