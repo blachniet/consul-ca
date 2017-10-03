@@ -17,6 +17,9 @@ CA_SUBJ="/CN=${CN}${SUBJ_BASE}"
 SERVER_SUBJ="/CN=server.${CONSUL_DC}.${CONSUL_DOMAIN}${SUBJ_BASE}"
 CLIENT_SUBJ="/CN=client.${CONSUL_DC}.${CONSUL_DOMAIN}${SUBJ_BASE}"
 
+# Key specifications
+KEY_SIZE=4096
+
 # Create the directories/files needed for the CA
 mkdir -p files
 mkdir -p state
@@ -24,16 +27,16 @@ echo "000a" > state/serial
 touch state/certindex
 
 # Generate a CA key and certificate
-openssl genrsa -out files/ca.key 4096
+openssl genrsa -out files/ca.key "$KEY_SIZE"
 openssl req -x509 -new -nodes -key files/ca.key -subj "$CA_SUBJ" -days 3650 -out files/ca.crt -sha256
 
 # Generate keys and certificates for Consul server agents
-openssl genrsa -out files/agent-server.key 4096
+openssl genrsa -out files/agent-server.key "$KEY_SIZE"
 openssl req -new -key files/agent-server.key -subj "$SERVER_SUBJ" -out files/agent-server.csr -sha256
 openssl ca -batch -config ca.conf -notext -in files/agent-server.csr -out files/agent-server.crt
 
 # Generate keys and certificates for Consul client agents
-openssl genrsa -out files/agent-client.key 4096
+openssl genrsa -out files/agent-client.key "$KEY_SIZE"
 openssl req -new -key files/agent-client.key -subj "$CLIENT_SUBJ" -out files/agent-client.csr -sha256
 openssl ca -batch -config ca.conf -notext -in files/agent-client.csr -out files/agent-client.crt
 
